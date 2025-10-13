@@ -40,7 +40,7 @@ p.lead{color:var(--muted);margin-top:12px}
 footer{margin-top:18px;color:var(--muted);font-size:13px}
 .thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .thumb{width:120px;border-radius:10px;padding:8px;background:#fff;border:1px dashed rgba(0,0,0,0.04);text-align:center}
-.thumb canvas{border-radius:8px;max-width:100%}
+.thumb img{max-width:100%;border-radius:8px}
 .note{font-size:12px;color:var(--muted);margin-top:10px}
 #thank-you{display:none;text-align:center;padding:40px;background:linear-gradient(180deg,#fff0f5,#fffaf6);border-radius:16px;margin-top:20px;box-shadow:0 8px 30px rgba(47,38,63,0.06);}
 .sparkle-container{position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;}
@@ -120,43 +120,99 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 <script>
-document.getElementById('year').textContent=new Date().getFullYear();
+const COMPANY_NAME='Cozy Loop Studio';
 const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
+document.getElementById('year').textContent=new Date().getFullYear();
 
-// Create canvas and sparkles
-window.addEventListener('DOMContentLoaded',()=>{
+// Patterns
+const PATTERNS={
+'Cozy-Beanie-Pattern.pdf':{title:'Cozy Beanie — Full Pattern', content:'Beginner-friendly beanie pattern here...'},
+'Cozy-Scarf-Pattern.pdf':{title:'Cozy Scarf — Full Pattern', content:'Beginner-friendly scarf pattern here...'},
+'Little-Pouch-Pattern.pdf':{title:'Little Pouch — Full Pattern', content:'Beginner-friendly pouch pattern here...'}
+};
+
+// PDF generation
+const {jsPDF}=window.jspdf;
+function generatePdf(title,text){
+  const doc=new jsPDF({unit:'pt',format:'letter'}); let y=40;
+  doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text(title,40,y); y+=22;
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  const lines=doc.splitTextToSize(text,doc.internal.pageSize.getWidth()-80);
+  lines.forEach(line=>{if(y>doc.internal.pageSize.getHeight()-60){doc.addPage(); y=40;} doc.text(line,40,y); y+=14;});
+  doc.setFontSize(9); doc.text(`Made with ✨ by ${COMPANY_NAME}`,40,doc.internal.pageSize.getHeight()-28);
+  return doc.output('blob');
+}
+
+// ZIP generation
+async function generateZip(){
+  const zip=new JSZip();
+  const folder=zip.folder('Cozy-Loop-Bundle');
+  for(const f in PATTERNS) folder.file(f,generatePdf(PATTERNS[f].title,PATTERNS[f].content));
+  return zip.generateAsync({type:'blob',compression:'DEFLATE'});
+}
+
+// Thumbnails
+function renderThumbs(){
+  const thumbs=document.getElementById('thumbs'); thumbs.innerHTML='';
+  ['Beanie','Scarf','Pouch'].forEach((text,i)=>{
+    const canvas=document.createElement('canvas'); canvas.width=120; canvas.height=80;
+    const ctx=canvas.getContext('2d'); ctx.fillStyle=['#fff6f7','#fffaf0','#f6f0ff'][i]; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#4b2f3f'; ctx.font='16px serif'; ctx.fillText(text+' 🧶',10,40);
+    const wrapper=document.createElement('div'); wrapper.className='thumb'; wrapper.appendChild(canvas);
+    thumbs.appendChild(wrapper);
+  });
+}
+renderThumbs();
+
+// Dynamic preview canvas
+function createPreviewCanvas(){
   const previewBox=document.getElementById('preview-area');
-  const canvas=document.createElement('canvas');
-  canvas.width=360; canvas.height=200;
+  const canvas=document.createElement('canvas'); canvas.width=360; canvas.height=200;
   const ctx=canvas.getContext('2d');
-
-  // Gradient background
-  const grad=ctx.createLinearGradient(0,0,0,canvas.height);
-  grad.addColorStop(0,'#FFE7F0'); grad.addColorStop(1,'#FFF0F5');
-  ctx.fillStyle=grad; ctx.fillRect(0,0,canvas.width,canvas.height);
-
+  // Background
+  const grad=ctx.createLinearGradient(0,0,0,200); grad.addColorStop(0,'#FFE7F0'); grad.addColorStop(1,'#FFF0F5');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,360,200);
   // Text
-  ctx.fillStyle='#5b3750';
-  ctx.font='bold 20px Pacifico, cursive';
-  ctx.fillText('Cozy Crochet Bundle',20,100);
-
+  ctx.fillStyle='#5b3750'; ctx.font='bold 20px Pacifico, cursive'; ctx.fillText('Cozy Crochet Bundle',20,100);
   previewBox.appendChild(canvas);
+}
+window.onload=()=>{
+  createSparkles();
+  createPreviewCanvas();
+};
 
-  // Sparkles
+function createSparkles(){
   const container=document.querySelector('.sparkle-container');
   for(let i=0;i<25;i++){
     const s=document.createElement('div'); s.className='sparkle';
-    s.style.top=Math.random()*100+'%';
-    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%'; s.style.left=Math.random()*100+'%';
     s.style.animationDuration=(Math.random()*1+1)+'s';
     s.style.animationDelay=(Math.random()*2)+'s';
     container.appendChild(s);
   }
+}
+
+// Button handlers
+const unlockBtn=document.getElementById('unlock-download');
+document.getElementById('buy-download').addEventListener('click',()=>unlockBtn.disabled=false || window.open(PAYPAL_LINK,'_blank'));
+unlockBtn.addEventListener('click',async()=>{
+  unlockBtn.disabled=true; unlockBtn.textContent='Preparing your files...';
+  const thankYou=document.getElementById('thank-you'); thankYou.style.display='block';
+  try{
+    const zip=await generateZip();
+    document.getElementById('download-now').onclick=()=>saveAs(zip,'cozy_loop_bundle.zip');
+    unlockBtn.textContent='Downloaded ✓';
+  }catch(e){console.error(e); alert('Error generating ZIP.'); unlockBtn.disabled=false; unlockBtn.textContent='I’ve Paid — Unlock Download';}
 });
 
-// Buttons
-document.getElementById('buy-download').addEventListener('click',()=>window.open(PAYPAL_LINK,'_blank'));
+document.getElementById('download-sample').addEventListener('click',()=>{
+  const blob=generatePdf(PATTERNS['Cozy-Beanie-Pattern.pdf'].title,PATTERNS['Cozy-Beanie-Pattern.pdf'].content);
+  saveAs(blob,'Cozy-Beanie-Sample.pdf');
+});
 </script>
 </body>
 </html>
