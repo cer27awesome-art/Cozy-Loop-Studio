@@ -72,7 +72,6 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
         <div class="preview">
           <div class="box" id="preview-area">
             <div class="sparkle-container"></div>
-            <!-- Canvas will be created here dynamically -->
           </div>
         </div>
 
@@ -125,16 +124,53 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 <script>
+document.getElementById('year').textContent=new Date().getFullYear();
 const COMPANY_NAME='Cozy Loop Studio';
 const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
-document.getElementById('year').textContent=new Date().getFullYear();
-
-// Patterns
 const PATTERNS={
-'Cozy-Beanie-Pattern.pdf':{title:'Cozy Beanie — Full Pattern', content:'Beginner-friendly beanie pattern here...'},
-'Cozy-Scarf-Pattern.pdf':{title:'Cozy Scarf — Full Pattern', content:'Beginner-friendly scarf pattern here...'},
-'Little-Pouch-Pattern.pdf':{title:'Little Pouch — Full Pattern', content:'Beginner-friendly pouch pattern here...'}
+'Cozy-Beanie-Pattern.pdf':{title:'Cozy Beanie', content:'Beginner-friendly beanie pattern here...'},
+'Cozy-Scarf-Pattern.pdf':{title:'Cozy Scarf', content:'Beginner-friendly scarf pattern here...'},
+'Little-Pouch-Pattern.pdf':{title:'Little Pouch', content:'Beginner-friendly pouch pattern here...'}
 };
+
+// Create preview canvas after DOM loads
+window.addEventListener('DOMContentLoaded', ()=>{
+  const previewBox=document.getElementById('preview-area');
+  // Canvas
+  const canvas=document.createElement('canvas');
+  canvas.width=360;
+  canvas.height=200;
+  const ctx=canvas.getContext('2d');
+  // Background
+  const grad=ctx.createLinearGradient(0,0,0,canvas.height);
+  grad.addColorStop(0,'#FFE7F0'); grad.addColorStop(1,'#FFF0F5');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Text
+  ctx.fillStyle='#5b3750'; ctx.font='bold 20px Pacifico, cursive';
+  ctx.fillText('Cozy Crochet Bundle',20,100);
+  previewBox.appendChild(canvas);
+
+  // Sparkles
+  const container=document.querySelector('.sparkle-container');
+  for(let i=0;i<25;i++){
+    const s=document.createElement('div'); s.className='sparkle';
+    s.style.top=Math.random()*100+'%'; s.style.left=Math.random()*100+'%';
+    s.style.animationDuration=(Math.random()*1+1)+'s';
+    s.style.animationDelay=(Math.random()*2)+'s';
+    container.appendChild(s);
+  }
+
+  // Thumbnails
+  const thumbs=document.getElementById('thumbs');
+  ['Beanie','Scarf','Pouch'].forEach((text,i)=>{
+    const c=document.createElement('canvas'); c.width=120; c.height=80;
+    const ctx2=c.getContext('2d');
+    ctx2.fillStyle=['#fff6f7','#fffaf0','#f6f0ff'][i]; ctx2.fillRect(0,0,120,80);
+    ctx2.fillStyle='#4b2f3f'; ctx2.font='16px serif'; ctx2.fillText(text+' 🧶',10,40);
+    const w=document.createElement('div'); w.className='thumb'; w.appendChild(c);
+    thumbs.appendChild(w);
+  });
+});
 
 // PDF & ZIP
 const {jsPDF}=window.jspdf;
@@ -143,18 +179,32 @@ function generatePdf(title,text){
   doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text(title,40,y); y+=22;
   doc.setFont('helvetica','normal'); doc.setFontSize(11);
   const lines=doc.splitTextToSize(text,doc.internal.pageSize.getWidth()-80);
-  lines.forEach(line=>{if(y>doc.internal.pageSize.getHeight()-60){doc.addPage(); y=40;} doc.text(line,40,y); y+=14;});
+  lines.forEach(line=>{if(y>doc.internal.pageSize.getHeight()-60){doc.addPage();y=40;} doc.text(line,40,y);y+=14;});
   doc.setFontSize(9); doc.text(`Made with ✨ by ${COMPANY_NAME}`,40,doc.internal.pageSize.getHeight()-28);
   return doc.output('blob');
 }
 async function generateZip(){
-  const zip=new JSZip();
-  const folder=zip.folder('Cozy-Loop-Bundle');
+  const zip=new JSZip(); const folder=zip.folder('Cozy-Loop-Bundle');
   for(const f in PATTERNS) folder.file(f,generatePdf(PATTERNS[f].title,PATTERNS[f].content));
   return zip.generateAsync({type:'blob',compression:'DEFLATE'});
 }
 
-// Thumbnails
-function renderThumbs(){
-  const thumbs=document.getElementById('thumbs'); thumbs.innerHTML='';
-  ['Beanie','Scarf','Pouch'].forEach((text,i
+// Buttons
+const unlockBtn=document.getElementById('unlock-download');
+document.getElementById('buy-download').addEventListener('click',()=>window.open(PAYPAL_LINK,'_blank'));
+unlockBtn.addEventListener('click',async()=>{
+  unlockBtn.disabled=true; unlockBtn.textContent='Preparing your files...';
+  document.getElementById('thank-you').style.display='block';
+  try{
+    const zip=await generateZip();
+    document.getElementById('download-now').onclick=()=>saveAs(zip,'cozy_loop_bundle.zip');
+    unlockBtn.textContent='Downloaded ✓';
+  }catch(e){console.error(e); unlockBtn.disabled=false; unlockBtn.textContent='I’ve Paid — Unlock Download';}
+});
+document.getElementById('download-sample').addEventListener('click',()=>{
+  const blob=generatePdf(PATTERNS['Cozy-Beanie-Pattern.pdf'].title,PATTERNS['Cozy-Beanie-Pattern.pdf'].content);
+  saveAs(blob,'Cozy-Beanie-Sample.pdf');
+});
+</script>
+</body>
+</html>
