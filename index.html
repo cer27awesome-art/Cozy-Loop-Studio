@@ -13,8 +13,8 @@
   --accent-2:#e6fbff;
   --muted:#6c6c72;
   --radius:16px;
-  --shadow: 0 8px 30px rgba(47,38,63,0.06);
-  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+  --shadow:0 8px 30px rgba(47,38,63,0.06);
+  font-family:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,Arial;
 }
 *{box-sizing:border-box}
 body{margin:0;background:linear-gradient(180deg,var(--bg),#ffffff);color:#222}
@@ -22,12 +22,12 @@ body{margin:0;background:linear-gradient(180deg,var(--bg),#ffffff);color:#222}
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px}
 .brand{display:flex;gap:16px;align-items:center}
 .logo{width:84px;height:84px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo h1{font-family: 'Pacifico', cursive;margin:0;font-size:22px;color:#5b3750}
+.logo h1{font-family:'Pacifico',cursive;margin:0;font-size:22px;color:#5b3750}
 h2{margin:6px 0 0;font-size:20px}
 p.lead{color:var(--muted);margin-top:12px}
 .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:22px}
 .preview{background:linear-gradient(180deg,#fff,#fffaf5);border-radius:12px;padding:16px;border:1px solid rgba(0,0,0,0.03)}
-.box{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#fffaf6,#fff0f5);border-radius:12px;padding:20px;overflow:auto}
+.box{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#fffaf6,#fff0f5);border-radius:12px;padding:20px;overflow:hidden}
 .box img{border-radius:12px;max-width:100%;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);}
 .meta{background:linear-gradient(180deg,#fff,#f8fffe);border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.03)}
 .price{font-size:26px;font-weight:600;margin:6px 0}
@@ -41,9 +41,16 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
 .thumb img{max-width:100%;border-radius:8px}
 .note{font-size:12px;color:var(--muted);margin-top:10px}
 #thank-you{display:none;text-align:center;padding:40px;background:linear-gradient(180deg,#fff0f5,#fffaf6);border-radius:16px;margin-top:20px;box-shadow:0 8px 30px rgba(47,38,63,0.06);}
+.sparkle-container{position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;}
+.sparkle{position:absolute;width:8px;height:8px;background-color:#ffccff;border-radius:50%;animation: sparkle-animation 1.5s infinite;}
+@keyframes sparkle-animation {
+0% {transform:translate(0,0) scale(1);opacity:0;}
+50% {transform:translate(20px,-20px) scale(1.5);opacity:1;}
+100% {transform:translate(0,0) scale(1);opacity:0;}
+}
 @media (max-width:880px){
-  .grid{grid-template-columns:1fr;}
-  .meta{order:-1}
+.grid{grid-template-columns:1fr;}
+.meta{order:-1}
 }
 </style>
 </head>
@@ -62,6 +69,7 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
       <div>
         <div class="preview">
           <div class="box" id="preview-area">
+            <div class="sparkle-container"></div>
             <img src="https://via.placeholder.com/360x200/FFE7F0/5b3750?text=Cozy+Crochet+Bundle" alt="Cozy Crochet Bundle Cover">
             <p style="color:#6c6c72;font-size:14px;text-align:center;">Your Cozy Crochet Bundle preview will appear here. Click “Buy & Download” to unlock the full patterns!</p>
           </div>
@@ -93,15 +101,13 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
             <li>Printable cover/marketing image (PNG)</li>
           </ul>
         </div>
-
         <div style="margin-top:12px">
           <strong>File formats</strong>
-          <p style="margin:6px 0 0;color:var(--muted);font-size:13px">PDF (patterns), PNG (charts & wallpapers), ZIP (all files)</p>
+          <p style="margin:6px 0 0;color:#6c6c72;font-size:13px">PDF (patterns), PNG (charts & wallpapers), ZIP (all files)</p>
         </div>
-
         <div style="margin-top:12px">
           <strong>Support</strong>
-          <p style="margin:6px 0 0;color:var(--muted);font-size:13px">Questions? Email <em>hello@cozyloop.example</em></p>
+          <p style="margin:6px 0 0;color:#6c6c72;font-size:13px">Questions? Email <em>hello@cozyloop.example</em></p>
         </div>
       </aside>
     </div>
@@ -120,116 +126,3 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
 <script>
 const COMPANY_NAME='Cozy Loop Studio';
 const PRODUCT_NAME='Cozy Crochet Bundle';
-const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
-const PRICE=8;
-document.getElementById('year').textContent=new Date().getFullYear();
-
-// ----- Patterns -----
-const PATTERNS={
-'Cozy-Beanie-Pattern.pdf':{title:'Cozy Beanie — Full Pattern', content:`Author: Cozy Loop Studio
-
-Skill: Beginner / Easy-Intermediate
-Finished size: Adult S/M (~20-22 in)
-
-Materials:
-- Worsted weight yarn (150-200g)
-- 5.5 mm crochet hook
-- Tapestry needle, scissors
-
-Abbreviations:
-ch, sc, hdc, dc, st(s), sl st, rnd
-
-Gauge: 12 sts x 8 rows = 4 inches in hdc
-
-Pattern:
-Magic ring, ch1
-Rnd1:10 hdc in ring (10)
-Rnd2:2 hdc in each st (20)
-Continue as instructed for crown and body.
-Ribbed cuff: sc in back loops 8 rows.
-Finish & weave in ends.`},
-'Cozy-Scarf-Pattern.pdf':{title:'Cozy Scarf — Full Pattern', content:`Author: Cozy Loop Studio
-
-Skill: Beginner
-Size: width ~6-8 in, length ~60-70 in
-
-Materials:
-- Worsted weight yarn
-- 5.5 mm hook
-
-Pattern:
-Ch30, sc in 2nd ch from hook, turn.
-Row2: ch2 (counts as hdc), hdc across.
-Repeat Rows1-2 until desired length.
-Border: sc around edges.
-Optional textured shell every 6th row.`},
-'Little-Pouch-Pattern.pdf':{title:'Little Pouch — Full Pattern', content:`Author: Cozy Loop Studio
-
-Skill: Beginner
-Materials:
-- Worsted/DK yarn (30-50g)
-- 4.0-4.5 mm hook
-- Optional zipper
-
-Pattern:
-Ch21, sc in 2nd ch, 18 rows, fold, seam sides.
-Add zipper/button as desired.`}
-};
-
-// ----- Helper: PDF generation -----
-const {jsPDF}=window.jspdf;
-function generatePdf(title,text){
-  const doc=new jsPDF({unit:'pt',format:'letter'});
-  const margin=40;
-  let y=margin;
-  doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text(title,margin,y); y+=22;
-  doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  const lines=doc.splitTextToSize(text,doc.internal.pageSize.getWidth()-margin*2);
-  for(let i=0;i<lines.length;i++){if(y>doc.internal.pageSize.getHeight()-60){doc.addPage(); y=margin;} doc.text(lines[i],margin,y); y+=14;}
-  doc.setFontSize(9); doc.text(`Made with ✨ by ${COMPANY_NAME}`,margin,doc.internal.pageSize.getHeight()-28);
-  return doc.output('blob');
-}
-
-// ----- ZIP generation -----
-async function generateZip(){
-  const zip=new JSZip();
-  const folder=zip.folder('Cozy-Loop-Bundle');
-  for(const filename in PATTERNS){folder.file(filename,generatePdf(PATTERNS[filename].title,PATTERNS[filename].content));}
-  return zip.generateAsync({type:'blob',compression:'DEFLATE'});
-}
-
-// ----- Preview thumbnails -----
-function renderPreviewThumbs(){
-  const thumbs=document.getElementById('thumbs'); thumbs.innerHTML='';
-  for(let i=0;i<3;i++){
-    const canvas=document.createElement('canvas'); canvas.width=240; canvas.height=160;
-    const ctx=canvas.getContext('2d'); ctx.fillStyle=(i===0)?'#fff6f7':(i===1)?'#fffaf0':'#f6f0ff';
-    ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#4b2f3f'; ctx.font='20px serif';
-    const text=(i===0)?'Beanie':(i===1)?'Scarf':'Pouch'; ctx.fillText(text,18,48); ctx.font='36px serif';
-    ctx.fillText('🧶',canvas.width-68,58);
-    const wrapper=document.createElement('div'); wrapper.className='thumb'; wrapper.appendChild(canvas);
-    thumbs.appendChild(wrapper);
-  }
-}
-renderPreviewThumbs();
-
-// ----- Button handlers -----
-const unlockBtn=document.getElementById('unlock-download');
-document.getElementById('buy-download').addEventListener('click',()=>{window.open(PAYPAL_LINK,'_blank'); unlockBtn.disabled=false;});
-unlockBtn.addEventListener('click',async()=>{
-  unlockBtn.disabled=true; unlockBtn.textContent='Preparing your files...';
-  const thankYou=document.getElementById('thank-you');
-  thankYou.style.display='block';
-  try{ const zipBlob=await generateZip(); 
-    document.getElementById('download-now').addEventListener('click',()=>{saveAs(zipBlob,'cozy_loop_bundle.zip');});
-    unlockBtn.textContent='Downloaded ✓';
-  } catch(e){console.error(e); alert('Error generating ZIP.'); unlockBtn.disabled=false; unlockBtn.textContent='I’ve Paid — Unlock Download';}
-});
-
-document.getElementById('download-sample').addEventListener('click',()=>{
-  const blob=generatePdf(PATTERNS['Cozy-Beanie-Pattern.pdf'].title,PATTERNS['Cozy-Beanie-Pattern.pdf'].content);
-  saveAs(blob,'Cozy-Beanie-Sample.pdf');
-});
-</script>
-</body>
-</html>
