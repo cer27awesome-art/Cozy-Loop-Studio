@@ -28,8 +28,8 @@ p.lead{color:var(--muted);margin-top:12px}
 .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:22px}
 .preview{background:linear-gradient(180deg,#fff,#fffaf5);border-radius:12px;padding:16px;border:1px solid rgba(0,0,0,0.03)}
 .box{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#fffaf6,#fff0f5);border-radius:12px;padding:20px;overflow:hidden}
-.box img{border-radius:12px;max-width:100%;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);transition: transform 0.5s ease;}
-.box img:hover{transform: scale(1.05) rotate(-2deg);}
+.box canvas{border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.05);transition: transform 0.5s ease;}
+.box:hover canvas{transform: scale(1.05) rotate(-2deg);}
 .box:hover .sparkle{animation-duration:0.7s !important;}
 .meta{background:linear-gradient(180deg,#fff,#f8fffe);border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.03)}
 .price{font-size:26px;font-weight:600;margin:6px 0}
@@ -72,8 +72,6 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
         <div class="preview">
           <div class="box" id="preview-area">
             <div class="sparkle-container"></div>
-            <img src="https://via.placeholder.com/360x200/FFE7F0/5b3750?text=Cozy+Crochet+Bundle" alt="Cozy Crochet Bundle Cover">
-            <p style="color:#6c6c72;font-size:14px;text-align:center;">Your Cozy Crochet Bundle preview will appear here. Click “Buy & Download” to unlock the full patterns!</p>
           </div>
         </div>
 
@@ -130,14 +128,15 @@ const COMPANY_NAME='Cozy Loop Studio';
 const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
 document.getElementById('year').textContent=new Date().getFullYear();
 
+// Patterns
 const PATTERNS={
 'Cozy-Beanie-Pattern.pdf':{title:'Cozy Beanie — Full Pattern', content:'Beginner-friendly beanie pattern here...'},
 'Cozy-Scarf-Pattern.pdf':{title:'Cozy Scarf — Full Pattern', content:'Beginner-friendly scarf pattern here...'},
 'Little-Pouch-Pattern.pdf':{title:'Little Pouch — Full Pattern', content:'Beginner-friendly pouch pattern here...'}
 };
 
+// PDF generation
 const {jsPDF}=window.jspdf;
-
 function generatePdf(title,text){
   const doc=new jsPDF({unit:'pt',format:'letter'}); let y=40;
   doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text(title,40,y); y+=22;
@@ -148,6 +147,7 @@ function generatePdf(title,text){
   return doc.output('blob');
 }
 
+// ZIP generation
 async function generateZip(){
   const zip=new JSZip();
   const folder=zip.folder('Cozy-Loop-Bundle');
@@ -155,6 +155,7 @@ async function generateZip(){
   return zip.generateAsync({type:'blob',compression:'DEFLATE'});
 }
 
+// Thumbnails
 function renderThumbs(){
   const thumbs=document.getElementById('thumbs'); thumbs.innerHTML='';
   ['Beanie','Scarf','Pouch'].forEach((text,i)=>{
@@ -167,6 +168,23 @@ function renderThumbs(){
 }
 renderThumbs();
 
+// Dynamic preview canvas
+function createPreviewCanvas(){
+  const previewBox=document.getElementById('preview-area');
+  const canvas=document.createElement('canvas'); canvas.width=360; canvas.height=200;
+  const ctx=canvas.getContext('2d');
+  // Background
+  const grad=ctx.createLinearGradient(0,0,0,200); grad.addColorStop(0,'#FFE7F0'); grad.addColorStop(1,'#FFF0F5');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,360,200);
+  // Text
+  ctx.fillStyle='#5b3750'; ctx.font='bold 20px Pacifico, cursive'; ctx.fillText('Cozy Crochet Bundle',20,100);
+  previewBox.appendChild(canvas);
+}
+window.onload=()=>{
+  createSparkles();
+  createPreviewCanvas();
+};
+
 function createSparkles(){
   const container=document.querySelector('.sparkle-container');
   for(let i=0;i<25;i++){
@@ -177,8 +195,8 @@ function createSparkles(){
     container.appendChild(s);
   }
 }
-window.onload=createSparkles;
 
+// Button handlers
 const unlockBtn=document.getElementById('unlock-download');
 document.getElementById('buy-download').addEventListener('click',()=>unlockBtn.disabled=false || window.open(PAYPAL_LINK,'_blank'));
 unlockBtn.addEventListener('click',async()=>{
