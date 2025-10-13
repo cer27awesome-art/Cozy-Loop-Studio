@@ -1,2 +1,177 @@
-# Cozy-Loop-Studio
-Crochet bisness
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cozy Loop Studio — Cozy Crochet Bundle</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fffaf6;
+  --card:#ffffff;
+  --accent:#ffe7f0;
+  --accent-2:#e6fbff;
+  --muted:#6c6c72;
+  --radius:16px;
+  --shadow:0 8px 30px rgba(47,38,63,0.06);
+  font-family:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,Arial;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#ffffff);color:#222}
+.wrap{max-width:980px;margin:36px auto;padding:28px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px}
+.brand{display:flex;gap:16px;align-items:center}
+.logo{width:84px;height:84px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo h1{font-family:'Pacifico',cursive;margin:0;font-size:22px;color:#5b3750}
+h2{margin:6px 0 0;font-size:20px}
+p.lead{color:var(--muted);margin-top:12px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:22px}
+.preview{border-radius:12px;padding:16px;position:relative;}
+.meta{background:linear-gradient(180deg,#fff,#f8fffe);border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.03)}
+.price{font-size:26px;font-weight:600;margin:6px 0}
+.features{margin-top:12px;color:var(--muted);font-size:14px}
+.btn{display:inline-block;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,#ffd1e6,#cfeeff);color:#2a1630;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+.btn.secondary{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:10px 14px}
+.small{font-size:13px;color:var(--muted);margin-top:10px}
+footer{margin-top:18px;color:var(--muted);font-size:13px}
+.thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.thumb{width:120px;border-radius:10px;padding:8px;background:#fff;border:1px dashed rgba(0,0,0,0.04);text-align:center}
+.thumb canvas{border-radius:8px;max-width:100%}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+#thank-you{display:none;text-align:center;padding:40px;background:linear-gradient(180deg,#fff0f5,#fffaf6);border-radius:16px;margin-top:20px;box-shadow:0 8px 30px rgba(47,38,63,0.06);}
+.sparkle-container{position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;}
+.sparkle{position:absolute;width:8px;height:8px;background-color:#ffccff;border-radius:50%;animation: sparkle-animation 1.5s infinite;}
+@keyframes sparkle-animation {
+0% {transform:translate(0,0) scale(1);opacity:0;}
+50% {transform:translate(20px,-20px) scale(1.5);opacity:1;}
+100% {transform:translate(0,0) scale(1);opacity:0;}
+}
+@media (max-width:880px){
+.grid{grid-template-columns:1fr;}
+.meta{order:-1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><h1>Cozy Loop</h1></div>
+      <div>
+        <h2>Cozy Crochet Bundle — Beanie + Scarf + Little Pouch</h2>
+        <p class="lead">Three beginner-friendly crochet patterns with stitch charts, printable cover art, and 3 coordinating phone wallpapers. Instant download after payment.</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="preview">
+          <canvas id="yarn-canvas" width="360" height="200"></canvas>
+          <div class="sparkle-container"></div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn" id="buy-download">Buy & Download — $8</button>
+          <button class="btn secondary" id="unlock-download">I’ve Paid — Unlock Download</button>
+          <button class="btn secondary" id="download-sample">Download Free Sample (Beanie)</button>
+        </div>
+
+        <p class="small">Clicking <strong>Buy & Download</strong> opens PayPal. Once payment is completed, click <strong>I’ve Paid — Unlock Download</strong> to get the full ZIP bundle.</p>
+
+        <div id="thank-you">
+          <h2 style="font-family:'Pacifico',cursive;color:#5b3750;">Thank You! 🧶✨</h2>
+          <p style="color:#6c6c72;margin-top:12px;font-size:16px;">Your Cozy Crochet Bundle is ready to download! We hope you enjoy your patterns.</p>
+          <button id="download-now" style="margin-top:16px;padding:12px 20px;border-radius:12px;background:linear-gradient(90deg,#ffd1e6,#cfeeff);border:none;color:#2a1630;font-weight:700;cursor:pointer;">Download ZIP</button>
+          <p class="note">Keep this page open until your download starts.</p>
+        </div>
+      </div>
+
+      <aside class="meta">
+        <p class="price">$8 — Digital Pattern Pack</p>
+        <div class="features">
+          <ul>
+            <li>3 full patterns (PDF) — Cozy Beanie, Cozy Scarf, Little Pouch</li>
+            <li>Printable stitch charts (PNG) and product thumbnails</li>
+            <li>3 phone wallpapers (1080×1920)</li>
+            <li>Printable cover/marketing image (PNG)</li>
+          </ul>
+        </div>
+        <div style="margin-top:12px">
+          <strong>File formats</strong>
+          <p style="margin:6px 0 0;color:#6c6c72;font-size:13px">PDF (patterns), PNG (charts & wallpapers), ZIP (all files)</p>
+        </div>
+        <div style="margin-top:12px">
+          <strong>Support</strong>
+          <p style="margin:6px 0 0;color:#6c6c72;font-size:13px">Questions? Email <em>hello@cozyloop.example</em></p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="thumbs" id="thumbs"></div>
+
+    <footer>
+      <p>Made with yarn & ✨ by Cozy Loop Studio • <span id="year"></span></p>
+    </footer>
+  </div>
+</div>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
+
+// Yarn ball & sparkles
+window.addEventListener('DOMContentLoaded',()=>{
+  const canvas=document.getElementById('yarn-canvas');
+  const ctx=canvas.getContext('2d');
+
+  // Gradient background
+  const grad=ctx.createLinearGradient(0,0,0,canvas.height);
+  grad.addColorStop(0,'#FFE7F0'); grad.addColorStop(1,'#FFF0F5');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Yarn ball
+  const centerX=canvas.width/2, centerY=canvas.height/2, radius=50;
+  ctx.fillStyle='#FFB6C1';
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle='#e695b0'; ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius-5, 0, Math.PI*2);
+  ctx.stroke();
+
+  // Text
+  ctx.fillStyle='#5b3750';
+  ctx.font='bold 18px Pacifico, cursive';
+  ctx.fillText('Cozy Crochet Bundle', centerX-100, centerY+80);
+
+  // Sparkles
+  const container=document.querySelector('.sparkle-container');
+  for(let i=0;i<25;i++){
+    const s=document.createElement('div'); s.className='sparkle';
+    s.style.top=Math.random()*100+'%';
+    s.style.left=Math.random()*100+'%';
+    s.style.animationDuration=(Math.random()*1+1)+'s';
+    s.style.animationDelay=(Math.random()*2)+'s';
+    container.appendChild(s);
+  }
+
+  // Thumbnails
+  const thumbs=document.getElementById('thumbs');
+  const thumbnailNames=['Beanie','Scarf','Pouch'];
+  const colors=['#fff6f7','#fffaf0','#f6f0ff'];
+  thumbnailNames.forEach((name,i)=>{
+    const c=document.createElement('canvas'); c.width=120; c.height=80;
+    const ctx2=c.getContext('2d');
+    ctx2.fillStyle=colors[i]; ctx2.fillRect(0,0,120,80);
+    ctx2.fillStyle='#4b2f3f'; ctx2.font='16px serif'; ctx2.fillText(name+' 🧶',10,40);
+    const w=document.createElement('div'); w.className='thumb'; w.appendChild(c);
+    thumbs.appendChild(w);
+  });
+});
+
+// Buttons
+document.getElementById('buy-download').addEventListener('click',()=>window.open(PAYPAL_LINK,'_blank'));
+</script>
+</body>
+</html>
