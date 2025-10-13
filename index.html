@@ -1,3 +1,20 @@
+<div id="test-canvas"></div>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const box = document.getElementById('test-canvas');
+  const canvas = document.createElement('canvas');
+  canvas.width = 360;
+  canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffe7f0';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#5b3750';
+  ctx.font = 'bold 20px Pacifico, cursive';
+  ctx.fillText('Hello Canvas!', 40, 100);
+  box.appendChild(canvas);
+});
+</script>
+
 <!doctype html>
 <html lang="en">
 <head>
