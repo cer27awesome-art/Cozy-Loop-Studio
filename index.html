@@ -83,7 +83,6 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="btn" id="buy-download">Buy & Download — $8</button>
           <button class="btn secondary" id="unlock-download">I’ve Paid — Unlock Download</button>
-          <button class="btn secondary" id="download-sample">Download Free Sample (Beanie)</button>
           <button class="btn" id="preview-pattern">Preview Pattern (PDF)</button>
         </div>
 
@@ -132,7 +131,6 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
 <script>
 const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
 const ZIP_LINK='cozy_loop_bundle.zip'; 
-const SAMPLE_LINK='Cozy-Beanie-Sample (3).pdf';
 
 document.getElementById('year').textContent=new Date().getFullYear();
 
@@ -185,9 +183,6 @@ unlockBtn.addEventListener('click',()=>{
   const thankYou=document.getElementById('thank-you'); thankYou.style.display='block';
   document.getElementById('download-now').onclick=()=>window.location.href=ZIP_LINK;
   unlockBtn.textContent='Downloaded ✓';
-});
-document.getElementById('download-sample').addEventListener('click',()=>{
-  window.location.href=SAMPLE_LINK;
 });
 
 // Preview Pattern PDF dynamically
@@ -257,5 +252,6 @@ Hand wash recommended, lay flat to dry.
   doc.save('Cozy-Beanie-Full-Pattern.pdf');
 });
 </script>
+
 </body>
 </html>
