@@ -31,7 +31,6 @@ p.lead{color:var(--muted);margin-top:12px}
 .box{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#fffaf6,#fff0f5);border-radius:12px;padding:20px;overflow:hidden}
 .box canvas{border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.05);transition: transform 0.5s ease;}
 .box:hover canvas{transform: scale(1.05) rotate(-2deg);}
-.box:hover .sparkle{animation-duration:0.7s !important;}
 .meta{background:linear-gradient(180deg,#fff,#f8fffe);border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.03)}
 .price{font-size:26px;font-weight:600;margin:6px 0}
 .features{margin-top:12px;color:var(--muted);font-size:14px}
@@ -125,16 +124,13 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
   </div>
 </div>
 
-<!-- jsPDF Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script>
 const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
-const ZIP_LINK='cozy_loop_bundle.zip'; 
+const ZIP_LINK='cozy_loop_bundle.zip';
 
 document.getElementById('year').textContent=new Date().getFullYear();
 
-// Thumbnails
+// Thumbnail preview
 function renderThumbs(){
   const thumbs=document.getElementById('thumbs'); thumbs.innerHTML='';
   ['Beanie','Scarf','Pouch'].forEach((text,i)=>{
@@ -172,86 +168,24 @@ window.onload=()=>{
   createPreviewCanvas();
 };
 
-// Buttons
 const unlockBtn=document.getElementById('unlock-download');
 document.getElementById('buy-download').addEventListener('click',()=>{
   unlockBtn.disabled=false;
   window.open(PAYPAL_LINK,'_blank');
 });
+
 unlockBtn.addEventListener('click',()=>{
-  unlockBtn.disabled=true; unlockBtn.textContent='Preparing your files...';
-  const thankYou=document.getElementById('thank-you'); thankYou.style.display='block';
+  unlockBtn.disabled=true; 
+  unlockBtn.textContent='Preparing your files...';
+  const thankYou=document.getElementById('thank-you'); 
+  thankYou.style.display='block';
+  setTimeout(()=>{
+    window.location.href = ZIP_LINK;
+    unlockBtn.style.display='none'; // ✅ hides the unlock button after download starts
+  }, 800);
   document.getElementById('download-now').onclick=()=>window.location.href=ZIP_LINK;
-  unlockBtn.textContent='Downloaded ✓';
-});
-
-// Preview Pattern PDF dynamically
-document.getElementById('preview-pattern').addEventListener('click', () => {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  
-  const patternText = `
-Cozy Beanie — Full Pattern
-Author: Cozy Loop Studio
-Skill: Beginner / Easy-Intermediate
-Finished size: Adult S/M (head circumference ~20-22 in). To adjust, change hook or yarn.
-Materials:
-- Worsted weight yarn (approx 150-200g)
-- 5.5 mm (I/9) crochet hook
-- Tapestry needle, scissors, stitch marker
-
-Abbreviations:
-ch = chain
-sc = single crochet
-hdc = half double crochet
-dc = double crochet
-st(s) = stitch(es)
-sl st = slip stitch
-rnd = round
-
-Gauge: 12 sts x 8 rows = 4 inches in hdc
-
-Notes:
-- Work with a stitch marker for rounds.
-- This pattern uses continuous rounds (do not join) unless specified.
-
-Pattern:
-
-Crown:
-Make a magic ring.
-Rnd 1: 10 hdc in ring. (10)
-Rnd 2: 2 hdc in each st around. (20)
-Rnd 3: *1 hdc in next st, 2 hdc in next* repeat around. (30)
-Rnd 4: *1 hdc in next 2 sts, 2 hdc in next* repeat around. (40)
-Rnd 5: *1 hdc in next 3, 2 hdc in next* repeat around. (50)
-Rnd 6: *1 hdc in next 4, 2 hdc in next* repeat around. (60)
-Continue increasing until crown diameter reaches ~8.5" for adult S/M.
-
-Body:
-Work even in hdc for ~6 rounds (or until total hat depth is about 9.5").
-
-Ribbed cuff:
-Switch to back-loop only (BLO).
-Row 1: ch 1, sc BLO around for 8 rows.
-Finish: Fold cuff up (optional), weave in ends.
-
-Sizing:
-For larger size, continue rounds of increases until crown reaches ~9.5" then work body as above.
-
-Care:
-Hand wash recommended, lay flat to dry.
-  `;
-
-  const lines = patternText.split('\n');
-  let y = 10;
-  lines.forEach(line => {
-    doc.text(line.trim(), 10, y);
-    y += 8;
-  });
-
-  doc.save('Cozy-Beanie-Full-Pattern.pdf');
 });
 </script>
-
 </body>
 </html>
+
