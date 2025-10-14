@@ -35,7 +35,8 @@ p.lead{color:var(--muted);margin-top:12px}
 .meta{background:linear-gradient(180deg,#fff,#f8fffe);border-radius:12px;padding:18px;border:1px solid rgba(0,0,0,0.03)}
 .price{font-size:26px;font-weight:600;margin:6px 0}
 .features{margin-top:12px;color:var(--muted);font-size:14px}
-.btn{display:inline-block;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,#ffd1e6,#cfeeff);color:#2a1630;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+.btn{display:inline-block;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,#ffd1e6,#cfeeff);color:#2a1630;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:transform 0.2s ease;}
+.btn:hover{transform:translateY(-2px);}
 .btn.secondary{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:10px 14px}
 .small{font-size:13px;color:var(--muted);margin-top:10px}
 footer{margin-top:18px;color:var(--muted);font-size:13px}
@@ -58,6 +59,7 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
 </style>
 </head>
 <body>
+
 <div class="wrap">
   <div class="card">
     <div class="brand">
@@ -82,6 +84,7 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
           <button class="btn" id="buy-download">Buy & Download — $8</button>
           <button class="btn secondary" id="unlock-download">I’ve Paid — Unlock Download</button>
           <button class="btn secondary" id="download-sample">Download Free Sample (Beanie)</button>
+          <button class="btn" id="preview-pattern">Preview Pattern (PDF)</button>
         </div>
 
         <p class="small">Clicking <strong>Buy & Download</strong> opens PayPal. Once payment is completed, click <strong>I’ve Paid — Unlock Download</strong> to get the full ZIP bundle.</p>
@@ -123,10 +126,13 @@ footer{margin-top:18px;color:var(--muted);font-size:13px}
   </div>
 </div>
 
+<!-- jsPDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
 const PAYPAL_LINK='https://www.paypal.com/paypalme/dailyblissplanners';
-const ZIP_LINK='https://cer27awesome-art.github.io/Cozy-Loop-Studio/cozy_loop_bundle.zip';
-const SAMPLE_LINK='https://cer27awesome-art.github.io/Cozy-Loop-Studio/Cozy-Beanie-Sample.pdf';
+const ZIP_LINK='cozy_loop_bundle.zip'; 
+const SAMPLE_LINK='Cozy-Beanie-Sample (3).pdf';
 
 document.getElementById('year').textContent=new Date().getFullYear();
 
@@ -182,6 +188,73 @@ unlockBtn.addEventListener('click',()=>{
 });
 document.getElementById('download-sample').addEventListener('click',()=>{
   window.location.href=SAMPLE_LINK;
+});
+
+// Preview Pattern PDF dynamically
+document.getElementById('preview-pattern').addEventListener('click', () => {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  const patternText = `
+Cozy Beanie — Full Pattern
+Author: Cozy Loop Studio
+Skill: Beginner / Easy-Intermediate
+Finished size: Adult S/M (head circumference ~20-22 in). To adjust, change hook or yarn.
+Materials:
+- Worsted weight yarn (approx 150-200g)
+- 5.5 mm (I/9) crochet hook
+- Tapestry needle, scissors, stitch marker
+
+Abbreviations:
+ch = chain
+sc = single crochet
+hdc = half double crochet
+dc = double crochet
+st(s) = stitch(es)
+sl st = slip stitch
+rnd = round
+
+Gauge: 12 sts x 8 rows = 4 inches in hdc
+
+Notes:
+- Work with a stitch marker for rounds.
+- This pattern uses continuous rounds (do not join) unless specified.
+
+Pattern:
+
+Crown:
+Make a magic ring.
+Rnd 1: 10 hdc in ring. (10)
+Rnd 2: 2 hdc in each st around. (20)
+Rnd 3: *1 hdc in next st, 2 hdc in next* repeat around. (30)
+Rnd 4: *1 hdc in next 2 sts, 2 hdc in next* repeat around. (40)
+Rnd 5: *1 hdc in next 3, 2 hdc in next* repeat around. (50)
+Rnd 6: *1 hdc in next 4, 2 hdc in next* repeat around. (60)
+Continue increasing until crown diameter reaches ~8.5" for adult S/M.
+
+Body:
+Work even in hdc for ~6 rounds (or until total hat depth is about 9.5").
+
+Ribbed cuff:
+Switch to back-loop only (BLO).
+Row 1: ch 1, sc BLO around for 8 rows.
+Finish: Fold cuff up (optional), weave in ends.
+
+Sizing:
+For larger size, continue rounds of increases until crown reaches ~9.5" then work body as above.
+
+Care:
+Hand wash recommended, lay flat to dry.
+  `;
+
+  const lines = patternText.split('\n');
+  let y = 10;
+  lines.forEach(line => {
+    doc.text(line.trim(), 10, y);
+    y += 8;
+  });
+
+  doc.save('Cozy-Beanie-Full-Pattern.pdf');
 });
 </script>
 </body>
